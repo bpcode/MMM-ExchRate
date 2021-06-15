@@ -9,15 +9,15 @@ Module.register("MMM-LICE", {
     // Module config defaults.
     defaults: {
 		accessKey: "",       // Free account & API Access Key at currencylayer.com
-	    source: "USD",       // USD unless you upgrade from free plan
-		symbols: "",         // Add in config file
-        useHeader: false,    // true if you want a header      
+	    source: "AUD",       // USD unless you upgrade from free plan
+		symbols: ["USD","INR"],         // Add in config file
+        useHeader: false,    // true if you want a header
         header: "",          // Any text you want. useHeader must be true
         maxWidth: "300px",
         animationSpeed: 3000,
         initialLoadDelay: 4250,
         retryDelay: 2500,
-        updateInterval: 45 * 60* 1000, // 45 min = 992 in a 31 day month (1000 free per month)
+        updateInterval: 5 * 60 * 60 * 1000, // 5 hours
 
     },
 
@@ -29,17 +29,16 @@ Module.register("MMM-LICE", {
         return ["moment.js"];
     },
 
-		
+
 	start: function() {
         Log.info("Starting module: " + this.name);
 
-
         //  Set locale.
-        this.url = "http://apilayer.net/api/live?access_key=" + this.config.accessKey + "&currencies=" + this.config.symbols + "&source=" + this.config.source + "&format=1";
+        this.url = "https://v6.exchangerate-api.com/v6/" + this.config.accessKey + "/latest/" + this.config.source;
         this.LICE = {};
         this.scheduleUpdate();
     },
-	
+
 
     getDom: function() {
 
@@ -61,17 +60,17 @@ Module.register("MMM-LICE", {
         }
 
         var LICE = this.LICE;
-		
+
 
         var top = document.createElement("div");
         top.classList.add("list-row");
 
 
         // timestamp
-        var timestamp = document.createElement("div");
-        timestamp.classList.add("small", "bright", "timestamp");
-        timestamp.innerHTML = "Rate as of " + moment.unix(LICE.timestamp).format('h:mm a') + " today";
-        wrapper.appendChild(timestamp);
+        // var timestamp = document.createElement("div");
+        // timestamp.classList.add("small", "bright", "timestamp");
+        // timestamp.innerHTML = "Rate as of " + moment.unix(LICE.timestamp).format('h:mm a') + " today";
+        // wrapper.appendChild(timestamp);
 
 
         // source currency
@@ -79,57 +78,81 @@ Module.register("MMM-LICE", {
         source.classList.add("small", "bright", "source");
         source.innerHTML = "Source Currency = " + this.config.source;
         wrapper.appendChild(source);
-        
-        
+
+
         // create table
-         var Table = document.createElement("table");
-            
+        var Table = document.createElement("table");
+
         // create row and column for Currency
         var Row = document.createElement("tr");
-        var Column = document.createElement("th");
-        Column.classList.add("align-left", "small", "bright", "Currency");
-        Column.innerHTML = "Currency";
-        Row.appendChild(Column);
+        var Currency = document.createElement("th");
+        Currency.classList.add("align-left", "small", "bright", "Currency");
+        Currency.innerHTML = "Currency";
+        Row.appendChild(Currency);
 
         // create row and column for Rate
         var Rate = document.createElement("th");
         Rate.classList.add("align-left", "small", "bright", "Rate");
         Rate.innerHTML = "Rate";
         Row.appendChild(Rate);
-            
-
         Table.appendChild(Row);
-        wrapper.appendChild(Table);
-        
-		
-		
-		// this gets the key from the key/pair of the element (hasOwnProperty)
-		for (var Key in LICE.quotes) {
-		if (LICE.quotes.hasOwnProperty(Key)) {
-	
-		
-	//// Learned this on jsfiddle. HOORAY!
-	//// This dynamically creates the div/tags for each element of LICE.quotes
-		var symbols = LICE.quotes;
-		for (var c in symbols) {
-		
-        var newElement = document.createElement("div");
-        newElement.classList.add("align-left", "xsmall", "bright", "symbol");
-        newElement.innerHTML += Key + ' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp '+ LICE.quotes[Key]; // + " = " + symbols[c];
-		}
-	}
-            
-		wrapper.appendChild(newElement);
 
-	} // <-- closes key/pair loop
-	
+
+
+        if (LICE.result == "success" ) {
+
+            for (var i = 0; i < this.config.symbols.length; i++) {
+              var Row = document.createElement("tr");
+              var col1 = document.createElement("th");
+              col1.classList.add("align-left", "small", "light", "symbol");
+              col1.innerHTML = this.config.symbols[i];
+              Row.appendChild(col1);
+              var col2 = document.createElement("th");
+              col2.classList.add("align-left", "small", "light", "symbol");
+              col2.innerHTML = LICE.conversion_rates[this.config.symbols[i]].toFixed(2);
+              Row.appendChild(col2);
+              Table.appendChild(Row);
+
+
+
+
+
+              // var newElement = document.createElement("div");
+              // newElement.classList.add("align-left", "small", "bright", "symbol");
+              // //newElement.innerHTML = curr
+              // newElement.innerHTML = this.config.symbols[i] + ' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp '+ LICE.conversion_rates[this.config.symbols[i]];
+              // wrapper.appendChild(newElement);
+
+            }
+
+
+            // var test = document.createElement("div");
+            // test.classList.add("small", "bright", "source");
+            // test.innerHTML = LICE.conversion_rates[this.config.symbols[1]] ;
+            // wrapper.appendChild(test);
+            // for (var Key in LICE.conversion_rates) {
+            //     if (LICE.conversion_rates.hasOwnProperty(Key)) {
+            //         var symbols = LICE.conversion_rates;
+            //         for (var c in symbols) {
+            //           var newElement = document.createElement("div");
+            //           newElement.classList.add("align-left", "xsmall", "bright", "symbol");
+            //           newElement.innerHTML += Key + ' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp '+ LICE.conversion_rates[Key];
+            //         }
+            //     }
+            //     wrapper.appendChild(newElement);
+            //
+            // }
+        }
+        wrapper.appendChild(Table);
+
+
         return wrapper;
-		
-}, // closes getDom
-    
-    
-    
-    
+
+    }, // closes getDom
+
+
+
+
     /////  Add this function to the modules you want to control with voice //////
 
     notificationReceived: function(notification, payload) {
@@ -138,7 +161,7 @@ Module.register("MMM-LICE", {
         }  else if (notification === 'SHOW_LICE') {
             this.show(1000);
         }
-            
+
     },
 
 
