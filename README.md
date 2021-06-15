@@ -14,7 +14,7 @@ This module is based on MMM-LICE by Mykle1. I have updated the API which is free
 
 Many or few. You choose!
 
-![](images/1.PNG) ![](images/2.PNG)
+![](screenshot.png)
 
 ## Installation
 
