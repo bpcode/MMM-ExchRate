@@ -1,17 +1,12 @@
-## MMM-LICE
+## MMM-ExchRate
 
-## Live International Currency Exchange
-
-Well, almost live. It's more like hourly with the free API Access Key, but 
-MMM-LICE sounded like such a cool name that I couldn't resist.
+This module is based on MMM-LICE by Mykle1. I have updated the API which is free but not limited to USD as base and also you get 1500 call per month. 
 
 ## What you get
 
-* Real-time exchange rate for 168 World Currencies & PRECIOUS METALS
+* Real-time exchange rate for 168 World Currencies
 
-* Exact date and time (UNIX) the exchange rates were collected.
-
-* 1000 free calls per month with free plan
+* 1500 free calls per month with free plan and not limited to USD as source
 
 * Annotated .css file included for coloring text and header.
 
@@ -23,9 +18,9 @@ Many or few. You choose!
 
 ## Installation
 
-* `git clone https://github.com/mykle1/MMM-LICE` into the `~/MagicMirror/modules` directory.
+* `git clone https://github.com/bpcode/MMM-ExchRate` into the `~/MagicMirror/modules` directory.
 
-* Get your free API Access Key from https://currencylayer.com/ (Free plan)
+* Get your free API Access Key from https://www.exchangerate-api.com (Free plan)
 
 * No dependencies needed! No kidding!
 
@@ -33,16 +28,16 @@ Many or few. You choose!
 ## Config.js entry and options
 
     {
-        module: 'MMM-LICE',
+        module: 'MMM-ExchRate',
         position: 'top_left',                 // Best in left, center, or right regions
+	header: "Exchange Rate",
         config: { 
-			accessKey: "Your API Access Key", // Free account & API Access Key at currencylayer.com
-			source: "USD",                    // USD unless you upgrade from free account
-			symbols: "AUD,CHF,EUR,GBP",       // Currency symbols
+			accessKey: "Your API Access Key", // Free account & API Access Key
+			source: "AUD",                    // or whatever is your source currency
+			symbols: ["USD","CHF","EUR","GBP"]       // Currency symbols as array
 			useHeader: false,                 
 			header: "Show me the money",
 			maxWidth: "300px",
         }
     },
 	
-## SpaceCowboysDude is outta round but he always fixes my mistakes
