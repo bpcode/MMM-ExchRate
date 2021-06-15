@@ -1,10 +1,10 @@
 /* Magic Mirror
- * Module: MMM-LICE
+ * Module: MMM-ExchRate
  *
- * By Mykle1
+ * By Bhupesh, based on MMM-LICE
  *
  */
-Module.register("MMM-LICE", {
+Module.register("MMM-ExchRate", {
 
     // Module config defaults.
     defaults: {
@@ -22,7 +22,7 @@ Module.register("MMM-LICE", {
     },
 
     getStyles: function() {
-        return ["MMM-LICE.css"];
+        return ["MMM-ExchRate.css"];
     },
 
     getScripts: function() {
@@ -35,7 +35,7 @@ Module.register("MMM-LICE", {
 
         //  Set locale.
         this.url = "https://v6.exchangerate-api.com/v6/" + this.config.accessKey + "/latest/" + this.config.source;
-        this.LICE = {};
+        this.ExchRate = {};
         this.scheduleUpdate();
     },
 
@@ -59,7 +59,7 @@ Module.register("MMM-LICE", {
             wrapper.appendChild(header);
         }
 
-        var LICE = this.LICE;
+        var ExchRate = this.ExchRate;
 
 
         var top = document.createElement("div");
@@ -74,10 +74,10 @@ Module.register("MMM-LICE", {
 
 
         // source currency
-        var source = document.createElement("div");
-        source.classList.add("small", "bright", "source");
-        source.innerHTML = "Source Currency = " + this.config.source;
-        wrapper.appendChild(source);
+        // var source = document.createElement("div");
+        // source.classList.add("small", "bright", "source");
+        // source.innerHTML = "Source Currency = " + this.config.source;
+        // wrapper.appendChild(source);
 
 
         // create table
@@ -93,65 +93,32 @@ Module.register("MMM-LICE", {
         // create row and column for Rate
         var Rate = document.createElement("th");
         Rate.classList.add("align-left", "small", "bright", "Rate");
-        Rate.innerHTML = "Rate";
+        Rate.innerHTML = "Rate ("+this.config.source+")";
         Row.appendChild(Rate);
         Table.appendChild(Row);
 
 
 
-        if (LICE.result == "success" ) {
+        if (ExchRate.result == "success" ) {
 
             for (var i = 0; i < this.config.symbols.length; i++) {
               var Row = document.createElement("tr");
               var col1 = document.createElement("th");
-              col1.classList.add("align-left", "small", "light", "symbol");
+              col1.classList.add("align-left", "small", "symbol");
               col1.innerHTML = this.config.symbols[i];
               Row.appendChild(col1);
               var col2 = document.createElement("th");
-              col2.classList.add("align-left", "small", "light", "symbol");
-              col2.innerHTML = LICE.conversion_rates[this.config.symbols[i]].toFixed(2);
+              col2.classList.add("align-left", "small", "symbol");
+              col2.innerHTML = ExchRate.conversion_rates[this.config.symbols[i]].toFixed(2);
               Row.appendChild(col2);
               Table.appendChild(Row);
-
-
-
-
-
-              // var newElement = document.createElement("div");
-              // newElement.classList.add("align-left", "small", "bright", "symbol");
-              // //newElement.innerHTML = curr
-              // newElement.innerHTML = this.config.symbols[i] + ' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp '+ LICE.conversion_rates[this.config.symbols[i]];
-              // wrapper.appendChild(newElement);
-
             }
 
-
-            // var test = document.createElement("div");
-            // test.classList.add("small", "bright", "source");
-            // test.innerHTML = LICE.conversion_rates[this.config.symbols[1]] ;
-            // wrapper.appendChild(test);
-            // for (var Key in LICE.conversion_rates) {
-            //     if (LICE.conversion_rates.hasOwnProperty(Key)) {
-            //         var symbols = LICE.conversion_rates;
-            //         for (var c in symbols) {
-            //           var newElement = document.createElement("div");
-            //           newElement.classList.add("align-left", "xsmall", "bright", "symbol");
-            //           newElement.innerHTML += Key + ' &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp '+ LICE.conversion_rates[Key];
-            //         }
-            //     }
-            //     wrapper.appendChild(newElement);
-            //
-            // }
         }
         wrapper.appendChild(Table);
-
-
         return wrapper;
 
     }, // closes getDom
-
-
-
 
     /////  Add this function to the modules you want to control with voice //////
 
@@ -166,7 +133,7 @@ Module.register("MMM-LICE", {
 
 
     processLICE: function(data) {
-        this.LICE = data;
+        this.ExchRate = data;
 	//	console.log(this.LICE);
         this.loaded = true;
     },

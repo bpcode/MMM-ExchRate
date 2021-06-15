@@ -1,7 +1,7 @@
 /* Magic Mirror
- * Module: MMM-LICE
+ * Module: MMM-ExchRate
  *
- * By Mykle1
+ * By Bhupesh based on MMM-LICE
  *
  */
 const NodeHelper = require('node_helper');
